@@ -32,5 +32,74 @@ def makeMyMatrix(matrix):
         new_row = []
     return arr_matrix
 
-res = readCSV("./task6_data.csv")
-print(makeMyMatrix(res))
+def makeOneMatrix(matrixs):
+    oneMatrix = []
+    for i in range(0, len(matrixs[0])):
+        summa = 0
+        for k in range(0, len(matrixs)):
+            summa += matrixs[k][i]
+        oneMatrix.append(round(summa/len(matrixs), 2))
+    return oneMatrix
+
+# Тетрадь
+# def makeKMatrixAgain(oneMatrix, k = [1/3, 1/3, 1/3]):
+#     xMatrix = []
+#     kLambda = 0
+#     matSumma = 0
+#     sumMatrix = [0] * len(k)
+#     kMatrix = []
+#     for i in range(0, len(oneMatrix), len(k)):
+#         matSumma = 0
+#         for j in range(0, len(k)):
+#             matSumma += oneMatrix[i+j]*k[j]
+#         xMatrix.append(matSumma)
+
+#     for i in range(0, len(oneMatrix)):
+#         kLambda += oneMatrix[i] * xMatrix[i // len(k)]
+        
+#     tmpMatrix = []
+#     for i in range(0, len(oneMatrix)):
+#         tmpMatrix.append(oneMatrix[i] * xMatrix[i // len(k)])
+#     for i in range(0, len(tmpMatrix)):
+#         sumMatrix[i % len(k)] += tmpMatrix[i]
+#     for i in range(0, len(sumMatrix)-1):
+#         kMatrix.append(round((1/kLambda)*sumMatrix[i], 3))
+#     kSumma = 0
+#     for i in range(0, len(kMatrix)):
+#         kSumma += kMatrix[i]
+#     kMatrix.append(round(1-kSumma, 3))
+#     if (abs(kMatrix[len(kMatrix)-1] - k[len(k)-1]) > 0.001):
+#         return makeKMatrixAgain(oneMatrix, kMatrix)
+#     else:
+#         return kMatrix
+
+def split(a, n):
+    k, m = divmod(len(a), n)
+    return (a[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(n))
+
+
+def makeKMatrix(oneMatrix, k = [1/3, 1/3, 1/3]):
+    xTable = list(split(oneMatrix, len(k)))
+    n = len(xTable[0])
+    kPrev = np.ones(n) / n
+    kNew = None
+    while True:
+        y = np.matmul(xTable, kPrev)
+        lbd = np.matmul(np.ones(n), y)
+        kNew = (1 / lbd) * y
+        diff = abs(kNew - kPrev)
+        max = diff.max()
+        if max <= 0.001:
+            break
+        else:
+            kPrev = kNew
+    return np.around(kNew, 3)
+
+def task(csvString):
+    res1 = readCSV(csvString)
+    res2 = makeMyMatrix(res1)
+    res3 = makeOneMatrix(res2)
+    res4 = makeKMatrix(res3)
+    return res4
+    
+print(task("./task6_data.csv"))
