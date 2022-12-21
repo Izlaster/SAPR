@@ -38,10 +38,10 @@ def makeOneMatrix(matrixs):
         summa = 0
         for k in range(0, len(matrixs)):
             summa += matrixs[k][i]
-        oneMatrix.append(round(summa/len(matrixs), 2))
+        oneMatrix.append(summa/len(matrixs))
     return oneMatrix
 
-# Тетрадь
+# Лекция очно
 # def makeKMatrixAgain(oneMatrix, k = [1/3, 1/3, 1/3]):
 #     xMatrix = []
 #     kLambda = 0
@@ -79,21 +79,21 @@ def split(a, n):
 
 
 def makeKMatrix(oneMatrix, k = [1/3, 1/3, 1/3]):
-    xTable = list(split(oneMatrix, len(k)))
-    n = len(xTable[0])
-    kPrev = np.ones(n) / n
-    kNew = None
+    kMatrix = list(split(oneMatrix, len(k)))
+    n = len(kMatrix[0])
+    kP = np.ones(n) / n
+    kN = None
     while True:
-        y = np.matmul(xTable, kPrev)
+        y = np.matmul(kMatrix, kP)
         lbd = np.matmul(np.ones(n), y)
-        kNew = (1 / lbd) * y
-        diff = abs(kNew - kPrev)
+        kN = (1 / lbd) * y
+        diff = abs(kN - kP)
         max = diff.max()
         if max <= 0.001:
             break
         else:
-            kPrev = kNew
-    return np.around(kNew, 3)
+            kP = kN
+    return np.around(kN, 3)
 
 def task(csvString):
     res1 = readCSV(csvString)
